@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('estadoHab').selectedIndex = 0; 
         document.getElementById('nuevoEstado').selectedIndex = 0; 
     }
-
+    //Funcion para validar que los inputs no sean vacios
     function validar_input(id) {
         const inpt = document.getElementById(id);
         if (!inpt || inpt.value.trim() === '') {
@@ -34,25 +34,30 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return inpt.value.trim();
     }
+    //Funcion para actualizar el estado de una habitacion
     function actualizar() {
+        //Se captura el valor del nuevo estado seleccionado
         const nuevoEstado = document.getElementById('nuevoEstado').value;
         const checkbox = document.querySelector('input[type="checkbox"]:checked');
         const row = checkbox.closest('tr');
+        //Se captura el numero de habitacion desde el primer index de la fila
         const nroHabitacion = parseInt(row.cells[0].textContent, 10);
 
         if (!nuevoEstado) {
             alert("Debe seleccionar un nuevo estado");
             return;
         }
-
+        //Se recorren los objetos del array habitaciones
         habs.forEach(function(hab) {
+            //En caso de encontrar el numero de habitacion, se actualiza el estado anterior al nuevo
             if (hab.nroHabitacion === nroHabitacion) {
                 hab.estadoHab = nuevoEstado;
             }
         });
-
+        //Se guardan los cambios en localStorage y se cargan
         guardar_habs_en_localStorage();
         cargar_habitacion();
+        //Se esconde el modal
         $('#myModal').modal('hide');
         alert('El estado se ha actualizado correctamente');
     }
