@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
   function cargar_cliente() {
     const bodyTabla = document.getElementById("clientTableBody");
     bodyTabla.innerHTML = "";
-    clients = JSON.parse(localStorage.getItem("clients"));
     clients.forEach(function (client) {
       const tr = document.createElement("tr");
 
@@ -80,6 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
       alert("No pueden haber campos vacíos");
       return;
     }
+    let clients = localStorage.getItem("clients");
     //Dentro del array clientes se compara si el correo del checkbox es igual al correo actual, en caso de ser verdad ->
     //-> Se modifican los datos de correo, nombre y apellido
     clients.forEach(function (client) {
