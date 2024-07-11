@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   }
+
   //Se capturan botones de agregar y eliminar
   const btn = document.getElementById("btnRegistrarCliente");
   const deleteBtn = document.getElementById("deleteClientBtn");
