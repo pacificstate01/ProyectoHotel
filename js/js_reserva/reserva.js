@@ -160,8 +160,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const row = checkbox.closest("tr");
             row.remove();
             //Se filtra por numero de documento
-            const nroDocumento = parseInt(row.cells[1].textContent, 10);
-            reserva = reserva.filter(r => r.nroDocumento !== nroDocumento);
+            const nro = parseInt(row.cells[1].textContent, 10);
+            reserva = reserva.filter(r => r.nro !== nro);
         });
         //Se guarda el array actualizado 
         guardar_reservas_en_localStorage();
