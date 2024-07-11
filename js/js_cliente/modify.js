@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function cargar_cliente() {
     const bodyTabla = document.getElementById("clientTableBody");
     bodyTabla.innerHTML = "";
-
+    clients = JSON.parse(localStorage.getItem("clients"));
     clients.forEach(function (client) {
       const tr = document.createElement("tr");
 
