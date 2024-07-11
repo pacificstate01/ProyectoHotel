@@ -14,7 +14,7 @@ function validarEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
 }
-//nota: lo de arriba no funciona dentro del contentloaded, por alguna razon
+
 document.addEventListener("DOMContentLoaded", function () {
     //Se capturan botones de agregar y eliminar
   const btn = document.getElementById("btnRegistrarCliente");

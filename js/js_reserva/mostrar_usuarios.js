@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-
+    //Funcion para mostrar los usuarios creados activos para la reserva
     function mostrar_usuarios(){
         const clients_guardados= localStorage.getItem('clients');
         let clientes = JSON.parse(clients_guardados);
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
     }
+    //Se actualiza la tabla a traves de algun cambio en localStorage
     window.addEventListener('storage', function (e) {
         if (e.key === 'clients') {
             mostrar_usuarios();

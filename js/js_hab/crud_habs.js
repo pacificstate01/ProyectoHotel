@@ -61,11 +61,11 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#myModal').modal('hide');
         alert('El estado se ha actualizado correctamente');
     }
-
+    //Se capturan los botones de agregar, eliminar y modificar
     const addHab = document.getElementById('addHab');
     const borrarHab = document.getElementById('borrarHab');
     const actualizarHab = document.getElementById('actualizarHab');
-    //Insertar
+    //Insertar habitacion
     addHab.addEventListener('click', function (event) {
         event.preventDefault();
         const nro = parseInt(validar_input('nroHabitacion'));
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Ingrese información en todos los campos");
             return;
         }
-
+        //En caso de que no exista se crea el objeto
         const existingHab = habs.find(e => e.nroHabitacion === nro);
         if (existingHab) {
             alert("La habitación ya existe");
@@ -87,17 +87,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 estadoHab: estadoHab
             }
             habs.push(newHab);
-
+            //Se guarda en localStorage la habitacion creada y se muestra
             guardar_habs_en_localStorage(); 
             alert("Habitación agregada correctamente");
             cargar_habitacion(); 
             limpiar_campos();
         }
     });
-
+    //Funcion para mostrar la habitacion
     function cargar_habitacion() {
         const bodyTabla = document.getElementById('clientTableBody');
         bodyTabla.innerHTML = ''; 
+
+
         habs.forEach(function (p) {
             const tr = document.createElement('tr');
             const row = ['nroHabitacion', 'tipoHab','estadoHab'];
@@ -106,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 td.textContent = p[i];
                 tr.appendChild(td);
             });
+            //Se agrega una checkbox al final de la fila para marcar
             const checkboxCell = document.createElement("td");
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
@@ -115,46 +118,52 @@ document.addEventListener('DOMContentLoaded', function () {
             bodyTabla.appendChild(tr); 
         });
     }
-    //Eliminar
+    //Eliminar habitacion
     borrarHab.addEventListener('click', function (e) {
         e.preventDefault();
+        //Se capturan los checkboxes marcados
         const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
         
+        //Se elimina la fila mas cercana al checkbox
         checkboxes.forEach(function (checkbox) {
             const row = checkbox.closest('tr');
             row.remove();
-
+            //Se filtra por numero de habitacion y se crea otra array sin la habitacion eliminada
             const nroHabitacion = parseInt(row.cells[0].textContent, 10);
             habs = habs.filter(hab => hab.nroHabitacion !== nroHabitacion);
             
         });
-        localStorage.setItem('habs', JSON.stringify(habs));
+        //Se guarda el array en localStorage
+        guardar_habs_en_localStorage();
         if (checkboxes.length === 0) {
             alert("No se han seleccionado habitaciones");
         } else {
             alert('Habitaciones seleccionadas eliminadas');
         }
     });
-    //Actualizar
+    //Actualizar habitacion
     actualizarHab.addEventListener('click', function(e) {
         e.preventDefault();
+        //Buscar checkboxes marcados
         const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
 
+        //En cado de que se haya marcado solo 1 checkbox se muestra el modal, de lo contrario no lo hace
         if (checkboxes.length !== 1) {
             alert("Seleccione solo 1 habitacion para modificar");
             return;
         }
         $('#myModal').modal('show');
     });
-    
+    //Se captura boton modificar dentro del modal y se actualiza la habitacion
     const modifyBtn = document.getElementById('modifyBtn');
     modifyBtn.addEventListener('click', function() {
         actualizar();
     });
+    //Se esconde el modal y se limpian los inputs del modal
     $('#myModal').on('hidden.bs.modal', function() {
         limpiar_campos();
     });
-
+    //Se cargarn las habitaciones y se muestran
     cargar_habs_desde_localStorage();
     cargar_habitacion(); 
 });
