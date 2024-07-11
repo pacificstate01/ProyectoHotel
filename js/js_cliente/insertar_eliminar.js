@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-  //Array clients para guardar datos
+  
   let clients = [];
-  //Funcion para validar si los inputs estan vacios o no
+
   function validar_input(id) {
     const inpt = document.getElementById(id);
     if (inpt.value.trim() === "") {
@@ -10,37 +10,82 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     return inpt.value.trim();
   }
-  //Funcion para validar que el mail tenga la forma de correo con caracter especial
+
+ 
   function validarEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   }
 
-  //Se capturan botones de agregar y eliminar
+  
+  function validar_nombre(nombre) {
+    return nombre.trim().length > 0;
+  }
+
+  
+  function validar_apellido(apellidos) {
+    return apellidos.trim().length > 0;
+  }
+
+  function limpiar_campos() {
+    const inputs = document.querySelectorAll('.input');
+    inputs.forEach(e => {
+        e.value = '';
+    });
+    document.getElementById("NuevoCorreo").value = "";
+    document.getElementById("NuevoNombre").value = "";
+    document.getElementById("NuevoApellido").value = "";
+}
+  //Funcion para cargar clientes en el html
+  function cargar_cliente() {
+    const bodyTabla = document.getElementById("clientTableBody");
+    bodyTabla.innerHTML = "";
+
+    clients.forEach(function (client) {
+      const tr = document.createElement("tr");
+      const row =["nroDocumento", "tipoDocumento", "nombre", "apellidos", "correo"];
+      row.forEach(function (info) {
+        const td = document.createElement("td");
+        td.textContent = client[info];
+        tr.appendChild(td);
+      }); 
+      //Se crea un checkbox al final de cada fila para marcar
+      const checkboxCell = document.createElement("td");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      //Se crean atributos adicionales al checkbox marcado del cliente seleccionado
+      checkbox.dataset.correo = client.correo;
+      checkbox.dataset.nombre = client.nombre;
+      checkbox.dataset.apellidos = client.apellidos;
+      checkboxCell.appendChild(checkbox);
+      tr.appendChild(checkboxCell);
+
+      bodyTabla.appendChild(tr);
+    });
+  }
+
+  //Se captura boton para agregar cliente
   const btn = document.getElementById("btnRegistrarCliente");
-  const deleteBtn = document.getElementById("deleteClientBtn");
-  //Evento cuando se aprete el boton de agregar
   btn.addEventListener("click", function (event) {
     event.preventDefault();
-    //Validacion de datos ingresados
+
     const nd = parseInt(validar_input("nroDocumento"));
     const td = validar_input("tipoDocumento");
     const nom = validar_input("nombres");
     const app = validar_input("apellidos");
     const co = validar_input("correo");
-    //Validacion de correo
+
     if (!validarEmail(co)) {
       alert("Correo electrónico inválido");
       return;
     }
-    //Se busca si el nro de documento ya existe, por ende el cliente ya esta ingresado
+    //Se verifica si ya esta ingresado (existe) el cliente a traves del numero de documento
     const existingClient = clients.find((e) => e.nroDocumento === nd);
-    //Si no estan todos los campos con datos se pide que se llenen
+
     if (!nd || !td || !nom || !app || !co) {
       alert("Ingrese información en todos los campos");
       return;
     } else {
-      //Si ya existe el cliente, se avisa y en caso contrario se crea un nuevo objeto cliente
       if (existingClient) {
         alert("El cliente ya existe");
       } else {
@@ -51,77 +96,99 @@ document.addEventListener("DOMContentLoaded", function () {
           apellidos: app,
           correo: co,
         };
-        //Se empuja dentro del array
+        //Se pushea al array clients y se almacena en localStorage
         clients.push(newClient);
-        //Se guarda en localStorage
         localStorage.setItem("clients", JSON.stringify(clients));
-        //Se carga el cliente ingresado y se limpian los campos usados
+
         alert("Cliente agregado correctamente");
         cargar_cliente();
         limpiar_campos();
       }
     }
   });
-  //Se captura el boton de eliminar
+
+  //Captura el boton eliminar cliente
+  const deleteBtn = document.getElementById("deleteClientBtn");
   deleteBtn.addEventListener("click", function () {
-    //Se capturan los checkboxes checkeados
-    const checkboxes = document.querySelectorAll(
-      'input[type="checkbox"]:checked'
-    );
-    //Se elimina la fila mas cercana al checkbox selecccionado
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
     checkboxes.forEach(function (checkbox) {
       const row = checkbox.closest("tr");
       row.remove();
-      //Se extrae el nro de documento del row para filtrar el array y asi crear un nuevo arreglo sin el cliente con ese nro
+      //Se almacena el numero de documento ubicado en el primer index del row ->
+      //Con este numero se filtra el array creando uno nuevo sin ese cliente con ese nro de documento
       const nroDocumento = parseInt(row.cells[0].textContent, 10);
-      clients = clients.filter(
-        (client) => client.nroDocumento !== nroDocumento
-      );
+      clients = clients.filter((client) => client.nroDocumento !== nroDocumento);
     });
-    //Se actualiza el array en localStorage
+    //Se actualiza el localStorage
     localStorage.setItem("clients", JSON.stringify(clients));
-    //Se revisa si algun checkbox ha sido efectivamente checkeado
+
     if (checkboxes.length === 0) {
       alert("No se han seleccionado clientes");
     } else {
       alert("Clientes seleccionados eliminados");
     }
   });
-  //Funcion para cargar clientes en el html
-  function cargar_cliente() {
-    const bodyTabla = document.getElementById("clientTableBody");
-    bodyTabla.innerHTML = "";
 
-    clients.forEach(function (p) {
-      const tr = document.createElement("tr");
+  //Se captura el boton actualizar(azul) y verifica que haya un checkbox marcado para mostrar el modal
+  const actualizarBtn = document.getElementById("actualizarBtn");
+  actualizarBtn.addEventListener("click", function () {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    if (checkboxes.length !== 1) {
+      alert("Seleccione solo 1 cliente para modificar");
+      return;
+    }
+    $("#myModal").modal("show");
+  });
 
-      const fila = [
-        "nroDocumento",
-        "tipoDocumento",
-        "nombre",
-        "apellidos",
-        "correo",
-      ];
-      fila.forEach(function (info) {
-        const td = document.createElement("td");
-        td.textContent = p[info];
-        tr.appendChild(td);
-      });
-      //Al final de cada row cliente se agrega una checkbox para marcar en caso de borrar o modificar
-      const checkboxCell = document.createElement("td");
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkboxCell.appendChild(checkbox);
-      tr.appendChild(checkboxCell);
+  //Se captura el boton modificar (dentro del modal) y los nuevos valores ingresados
+  const modifyBtn = document.getElementById("modifyBtn");
+  modifyBtn.addEventListener("click", function () {
+    const newEmail = document.getElementById("NuevoCorreo").value;
+    const newName = document.getElementById("NuevoNombre").value;
+    const newApp = document.getElementById("NuevoApellido").value;
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
 
-      bodyTabla.appendChild(tr);
+    if (checkboxes.length !== 1) {
+      alert("Seleccione solo 1 cliente para modificar");
+      return;
+    }
+    //Se almacena el checkbox marcado y se captura el correo asociado del dataset del checkbox 
+    const checkSelected = checkboxes[0];
+    const currentEmail = checkSelected.dataset.correo;
+
+    if (!validarEmail(newEmail)) {
+      alert("Correo electrónico inválido");
+      return;
+    }
+
+    if (!validar_nombre(newName) || !validar_apellido(newApp)) {
+      alert("No pueden haber campos vacíos");
+      return;
+    }
+    //Se actualizan los datos en funcion de que el correo del checkbox sea igual al correo actual ->
+    //Y Se hace el cambio para el correo nuevo, nombre y apellido
+    clients.forEach(function (client) {
+      if (client.correo === currentEmail) {
+        client.correo = newEmail;
+        client.nombre = newName;
+        client.apellidos = newApp;
+      }
     });
+    //Se actualiza el localStorage, se muestra en el html y se esconde el modal
+    localStorage.setItem("clients", JSON.stringify(clients));
+    cargar_cliente();
+    $("#myModal").modal("hide");
+    alert("La información se ha actualizado correctamente");
+  });
+
+  //Si existe un array clients en localStorage se parsea y se muestra en el html
+  if (localStorage.getItem('clients')) {
+    clients = JSON.parse(localStorage.getItem('clients'));
+    cargar_cliente(); 
   }
-  //Funcion para limpiar los inputs usados
-  function limpiar_campos() {
-    const inputs = document.querySelectorAll(".input");
-    inputs.forEach((e) => {
-      e.value = "";
-    });
-  }
+
+  //Se limpian los inputs del modal cuando se esconde
+  $("#myModal").on("hidden.bs.modal", function () {
+    limpiar_campos();
+  });
 });
