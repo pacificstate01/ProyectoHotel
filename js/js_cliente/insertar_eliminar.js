@@ -1,25 +1,24 @@
-//Array clients para guardar datos
-let clients = [];
-//Funcion para validar si los inputs estan vacios o no
-function validar_input(id) {
-  const inpt = document.getElementById(id);
-  if (inpt.value.trim() === "") {
-    console.log("Campos vacios");
-    return;
-  }
-  return inpt.value.trim();
-}
-//Funcion para validar que el mail tenga la forma de correo con caracter especial
-function validarEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
-}
-
 document.addEventListener("DOMContentLoaded", function () {
-    //Se capturan botones de agregar y eliminar
+  //Array clients para guardar datos
+  let clients = [];
+  //Funcion para validar si los inputs estan vacios o no
+  function validar_input(id) {
+    const inpt = document.getElementById(id);
+    if (inpt.value.trim() === "") {
+      console.log("Campos vacios");
+      return;
+    }
+    return inpt.value.trim();
+  }
+  //Funcion para validar que el mail tenga la forma de correo con caracter especial
+  function validarEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+  //Se capturan botones de agregar y eliminar
   const btn = document.getElementById("btnRegistrarCliente");
   const deleteBtn = document.getElementById("deleteClientBtn");
-    //Evento cuando se aprete el boton de agregar
+  //Evento cuando se aprete el boton de agregar
   btn.addEventListener("click", function (event) {
     event.preventDefault();
     //Validacion de datos ingresados
@@ -40,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
       alert("Ingrese información en todos los campos");
       return;
     } else {
-        //Si ya existe el cliente, se avisa y en caso contrario se crea un nuevo objeto cliente
+      //Si ya existe el cliente, se avisa y en caso contrario se crea un nuevo objeto cliente
       if (existingClient) {
         alert("El cliente ya existe");
       } else {
@@ -72,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
     checkboxes.forEach(function (checkbox) {
       const row = checkbox.closest("tr");
       row.remove();
-    //Se extrae el nro de documento del row para filtrar el array y asi crear un nuevo arreglo sin el cliente con ese nro 
+      //Se extrae el nro de documento del row para filtrar el array y asi crear un nuevo arreglo sin el cliente con ese nro
       const nroDocumento = parseInt(row.cells[0].textContent, 10);
       clients = clients.filter(
         (client) => client.nroDocumento !== nroDocumento
@@ -117,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
       bodyTabla.appendChild(tr);
     });
   }
- //Funcion para limpiar los inputs usados
+  //Funcion para limpiar los inputs usados
   function limpiar_campos() {
     const inputs = document.querySelectorAll(".input");
     inputs.forEach((e) => {
