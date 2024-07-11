@@ -118,8 +118,8 @@ document.addEventListener("DOMContentLoaded", function () {
     actualizar();
   });
   //Se capturan los datos del cliente en localStorage y se muestra en el html
-    clients = JSON.parse(localStorage.getItem("clients"));
-    cargar_cliente();
+    const cl = localStorage.getItem("clients");
+    cargar_cliente(cl);
   
   //Cuando el modal se esconde, se limpian los inputs
   $("#myModal").on("hidden.bs.modal", function () {
